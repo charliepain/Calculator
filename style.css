@@ -1,0 +1,41 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: Verdana, Arial, sans-serif ;
+    font-size: 20px;
+}
+
+.calculator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.display {
+    text-align: right;
+    font-size: 36px;
+    width: 240px;
+    padding: 8px;
+    border: 2px solid rgb(87, 87, 87);
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+button {
+    width: 56px;
+    height: 56px;
+}
+
+.top.row {
+    display: flex;
+}
+
+button.clear {
+    margin-right: auto;
+}
