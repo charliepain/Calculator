@@ -34,9 +34,9 @@ function operate(operator, number1, number2) {
 
 let display = document.querySelector(".display");
 
-let number1;
-let operator;
-let number2;
+let number1 = null;
+let operator = null;
+let number2 = null;
 // This variable is true if the last button that was clicked was an operator
 // or an equals
 let specialClicked = false;
@@ -44,7 +44,7 @@ let specialClicked = false;
 const buttons = document.querySelector(".buttons");
 
 function displayOperations() {
-    if (number1 === null || number1 === undefined) {
+    if (number1 === null) {
         number1 = Number(display.textContent);
     } else if (!specialClicked) {
         number2 = Number(display.textContent);
@@ -57,7 +57,7 @@ buttons.addEventListener("click", e => {
     const character = e.target.textContent;
 
     // If clear button was clicked
-    if (character === "C") {
+    if (character === "AC") {
         number1 = null;
         operator = null;
         number2 = null;
@@ -68,7 +68,6 @@ buttons.addEventListener("click", e => {
 
     // If a number button was clicked
     else if (!isNaN(character)) {
-        operatorClicked = false;
         if (display.textContent === "0"
             || specialClicked) display.textContent = character;
         else display.textContent += character;
@@ -102,13 +101,21 @@ buttons.addEventListener("click", e => {
 
     // If equals button was clicked
     if (character === "=") {
-        if (number1 === null || number1 === undefined);
+        if (number1 === null) {
+            number1 = Number(display.textContent);
+            if (specialClicked) {
+                display.textContent = operate(operator, number1, number2);
+                number1 = null;
+            }
+            specialClicked = true;
+        }
         else {
             number2 = Number(display.textContent);
-            number1 = operate(operator, number1, number2);
-            display.textContent = number1;
+            display.textContent = operate(operator, number1, number2);
+            number1 = null;
             specialClicked = true;
         }
         return;
     }
+    // bug after equals,
 });
