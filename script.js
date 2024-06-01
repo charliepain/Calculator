@@ -58,11 +58,12 @@ buttons.addEventListener("click", e => {
 
     // If clear button was clicked
     if (character === "C") {
-        specialClicked = false;
         number1 = null;
         operator = null;
         number2 = null;
         display.textContent = "0";
+        specialClicked = false;
+        return;
     }
 
     // If a number button was clicked
@@ -79,9 +80,9 @@ buttons.addEventListener("click", e => {
     switch (character) {
         case ADD_OPERATOR:
         case SUBTRACT_OPERATOR:
-            specialClicked = true;
             operator = character;
             displayOperations();
+            specialClicked = true;
             return;
     }
 
@@ -92,10 +93,10 @@ buttons.addEventListener("click", e => {
     switch (unicode) {
         case UNICODE_MULTIPLICATION:
         case UNICODE_DIVISION:
-            specialClicked = true;
             operator = (unicode === UNICODE_MULTIPLICATION) ? MULTIPLY_OPERATOR
                 : DIVIDE_OPERATOR;
             displayOperations();
+            specialClicked = true;
             return;
     }
 
@@ -103,10 +104,10 @@ buttons.addEventListener("click", e => {
     if (character === "=") {
         if (number1 === null || number1 === undefined);
         else {
-            specialClicked = true;
             number2 = Number(display.textContent);
             number1 = operate(operator, number1, number2);
             display.textContent = number1;
+            specialClicked = true;
         }
         return;
     }
