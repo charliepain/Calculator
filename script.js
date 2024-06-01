@@ -19,17 +19,43 @@ function divide(a, b) {
     return a / b;
 }
 
+function formatResult(result) {
+    const DISPLAY_DIGIT_LIMIT = 12;
+    const resultString = result.toString();
+    if (resultString.length <= DISPLAY_DIGIT_LIMIT) return result;
+
+    let decimals = DISPLAY_DIGIT_LIMIT
+        - resultString.split(".")[0].length;
+
+    if (decimals >= 0) return Number(result.toFixed(decimals));
+
+    // decimals < 0 means that the integer part is longer than the limit
+    // The exponent part is assumed to be 4 characters long
+    const LENGTH_OF_EXPONENT_PART = 4;
+    return result.toExponential(
+        DISPLAY_DIGIT_LIMIT + decimals - LENGTH_OF_EXPONENT_PART
+    );
+}
+
 function operate(operator, number1, number2) {
+    let result;
     switch (operator) {
         case ADD_OPERATOR:
-            return add(number1, number2);
+            result = add(number1, number2);
+            break;
         case SUBTRACT_OPERATOR:
-            return subtract(number1, number2);
+            result = subtract(number1, number2);
+            break;
         case MULTIPLY_OPERATOR:
-            return multiply(number1, number2);
+            result = multiply(number1, number2);
+            break;
         case DIVIDE_OPERATOR:
-            return divide(number1, number2);
+            if (number2 === 0) return "Error. Cannot divide by 0.";
+            result = divide(number1, number2);
+            break;
     }
+
+    return formatResult(result);
 }
 
 let display = document.querySelector(".display");
@@ -109,7 +135,7 @@ buttons.addEventListener("click", e => {
             }
             specialClicked = true;
         }
-        else {
+        else if (operator !== null) {
             number2 = Number(display.textContent);
             display.textContent = operate(operator, number1, number2);
             number1 = null;
