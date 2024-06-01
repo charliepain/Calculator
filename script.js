@@ -46,7 +46,8 @@ const buttons = document.querySelector(".buttons");
 function displayOperations() {
     if (number1 === null || number1 === undefined) {
         number1 = Number(display.textContent);
-    } else if (number2 !== null || number2 !== undefined) {
+    } else if (!specialClicked) {
+        number2 = Number(display.textContent);
         number1 = operate(operator, number1, number2);
         display.textContent = number1;
     }
@@ -67,13 +68,14 @@ buttons.addEventListener("click", e => {
     // If a number button was clicked
     else if (!isNaN(character)) {
         operatorClicked = false;
-        if (display.textContent === "0" || specialClicked) display.textContent = character;
-        else display.textContent += character; 
+        if (display.textContent === "0"
+            || specialClicked) display.textContent = character;
+        else display.textContent += character;
         specialClicked = false;
         return;
     }
 
-    // If "+" or "-" button was clicked
+    // If addition or subtraction button was clicked
     switch (character) {
         case ADD_OPERATOR:
         case SUBTRACT_OPERATOR:
@@ -91,13 +93,13 @@ buttons.addEventListener("click", e => {
         case UNICODE_MULTIPLICATION:
         case UNICODE_DIVISION:
             specialClicked = true;
-            operator = (unicode === UNICODE_MULTIPLICATON) ? MULTIPLY_OPERATOR
+            operator = (unicode === UNICODE_MULTIPLICATION) ? MULTIPLY_OPERATOR
                 : DIVIDE_OPERATOR;
             displayOperations();
             return;
     }
 
-    // If equality button was pressed
+    // If equals button was clicked
     if (character === "=") {
         if (number1 === null || number1 === undefined);
         else {
