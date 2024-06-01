@@ -95,11 +95,20 @@ buttons.addEventListener("click", e => {
     }
 
     // If a number button was clicked
-    else if (!isNaN(character)) {
+    if (!isNaN(character)) {
         if (display.textContent === "0"
             || specialClicked) display.textContent = character;
         else if (display.textContent.length >= DISPLAY_DIGIT_LIMIT) return;
         else display.textContent += character;
+        specialClicked = false;
+        return;
+    }
+
+    if (character === ".") {
+        if (display.textContent === "0"
+            || specialClicked) display.textContent = "0.";
+        else if (display.textContent.length >= DISPLAY_DIGIT_LIMIT) return;
+        else if (!display.textContent.includes(".")) display.textContent += ".";
         specialClicked = false;
         return;
     }
