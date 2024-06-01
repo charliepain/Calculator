@@ -20,6 +20,7 @@ function divide(a, b) {
 }
 
 function formatResult(result) {
+    if (isNaN(result)) return result;
     const DISPLAY_DIGIT_LIMIT = 12;
     const resultString = result.toString();
     if (resultString.length <= DISPLAY_DIGIT_LIMIT) return result;
@@ -48,7 +49,7 @@ function operate(operator, number1, number2) {
             result = multiply(number1, number2);
             break;
         case DIVIDE_OPERATOR:
-            if (number2 === 0) return "Error. Cannot divide by 0.";
+            if (number2 === 0) return "Division by 0 error";
             result = divide(number1, number2);
             break;
     }
