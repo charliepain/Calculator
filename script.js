@@ -37,7 +37,8 @@ let number2;
 const buttons = document.querySelector(".buttons");
 buttons.addEventListener("click", e => {
     const character = e.target.textContent;
-    if (!isNaN(character)
+    if (character === "C") display.textContent = "";
+    else if (!isNaN(character)
         || character === "+"
         || character === "-") {
             display.textContent += ` ${character}`;
