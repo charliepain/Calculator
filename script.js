@@ -30,11 +30,9 @@ function formatResult(result) {
     if (decimals >= 0) return Number(result.toFixed(decimals));
 
     // decimals < 0 means that the integer part is longer than the limit
-    // The exponent part is assumed to be 4 characters long
-    const LENGTH_OF_EXPONENT_PART = 4;
-    return result.toExponential(
-        DISPLAY_DIGIT_LIMIT + decimals - LENGTH_OF_EXPONENT_PART
-    );
+    // The exponent notation adds aproximatily 5 extra characters in most cases
+    const EXTRA_EXPONENT_LENGTH = 5;
+    return result.toExponential(DISPLAY_DIGIT_LIMIT - EXTRA_EXPONENT_LENGTH);
 }
 
 function operate(operator, number1, number2) {
@@ -55,7 +53,7 @@ function operate(operator, number1, number2) {
             break;
     }
 
-    return formatResult(result);
+    return result;
 }
 
 let display = document.querySelector(".display");
@@ -63,7 +61,9 @@ let display = document.querySelector(".display");
 let number1 = null;
 let operator = null;
 let number2 = null;
-// This variable is true if the last button that was clicked was an operator
+// buffer stores the exact value of results after a calculation
+let buffer = null;
+// specialClicked is true if the last button that was clicked was an operator
 // or an equals
 let specialClicked = false;
 
@@ -71,11 +71,11 @@ const buttons = document.querySelector(".buttons");
 
 function displayOperations() {
     if (number1 === null) {
-        number1 = Number(display.textContent);
+        number1 = specialClicked ? buffer : Number(display.textContent);
     } else if (!specialClicked) {
         number2 = Number(display.textContent);
         number1 = operate(operator, number1, number2);
-        display.textContent = number1;
+        display.textContent = formatResult(number1);
     }
 }
 
@@ -87,6 +87,7 @@ buttons.addEventListener("click", e => {
         number1 = null;
         operator = null;
         number2 = null;
+        buffer = null;
         display.textContent = "0";
         specialClicked = false;
         return;
@@ -129,19 +130,21 @@ buttons.addEventListener("click", e => {
     if (character === "=") {
         if (number1 === null) {
             number1 = Number(display.textContent);
-            if (specialClicked) {
-                display.textContent = operate(operator, number1, number2);
+            if (specialClicked && buffer !== null) {
+                number1 = buffer;
+                buffer = operate(operator, number1, number2);
+                display.textContent = formatResult(buffer);
                 number1 = null;
             }
             specialClicked = true;
         }
         else if (operator !== null) {
             number2 = Number(display.textContent);
-            display.textContent = operate(operator, number1, number2);
+            buffer = operate(operator, number1, number2);
+            display.textContent = formatResult(buffer);
             number1 = null;
             specialClicked = true;
         }
         return;
     }
-    // bug after equals,
 });
