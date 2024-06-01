@@ -2,6 +2,7 @@ const ADD_OPERATOR = "+";
 const SUBTRACT_OPERATOR = "-";
 const MULTIPLY_OPERATOR = "*";
 const DIVIDE_OPERATOR = "/";
+const DISPLAY_DIGIT_LIMIT = 12;
 
 function add(a, b) {
     return a + b;
@@ -21,7 +22,6 @@ function divide(a, b) {
 
 function formatResult(result) {
     if (isNaN(result)) return result;
-    const DISPLAY_DIGIT_LIMIT = 12;
     const resultString = result.toString();
     if (resultString.length <= DISPLAY_DIGIT_LIMIT) return result;
 
@@ -98,6 +98,7 @@ buttons.addEventListener("click", e => {
     else if (!isNaN(character)) {
         if (display.textContent === "0"
             || specialClicked) display.textContent = character;
+        else if (display.textContent.length >= DISPLAY_DIGIT_LIMIT) return;
         else display.textContent += character;
         specialClicked = false;
         return;
