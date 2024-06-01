@@ -108,8 +108,8 @@ buttons.addEventListener("click", e => {
     switch (character) {
         case ADD_OPERATOR:
         case SUBTRACT_OPERATOR:
-            operator = character;
             displayOperations();
+            operator = character;
             specialClicked = true;
             return;
     }
@@ -121,9 +121,9 @@ buttons.addEventListener("click", e => {
     switch (unicode) {
         case UNICODE_MULTIPLICATION:
         case UNICODE_DIVISION:
+            displayOperations();
             operator = (unicode === UNICODE_MULTIPLICATION) ? MULTIPLY_OPERATOR
                 : DIVIDE_OPERATOR;
-            displayOperations();
             specialClicked = true;
             return;
     }
