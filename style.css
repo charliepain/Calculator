@@ -37,8 +37,12 @@
 button {
     width: 58px;
     height: 58px;
-    background-color: rgb(55, 231, 172);
+    background-color: rgb(136, 247, 210);
     border-radius: 8px;
+}
+
+.operator {
+    background-color: rgb(55, 231, 172);
 }
 
 button:hover {
