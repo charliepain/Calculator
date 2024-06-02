@@ -138,7 +138,7 @@ buttons.addEventListener("click", e => {
         if (
             display.textContent === "0"
             || specialClicked
-        );
+        ) return;
         else if (display.textContent.length === 1) display.textContent = "0";
         else display.textContent = display.textContent.slice(0, -1);
         specialClicked = false;
