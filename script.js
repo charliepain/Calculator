@@ -96,8 +96,10 @@ buttons.addEventListener("click", e => {
 
     // If a number button was clicked
     if (!isNaN(character)) {
-        if (display.textContent === "0"
-            || specialClicked) display.textContent = character;
+        if (
+            display.textContent === "0"
+            || specialClicked
+        ) display.textContent = character;
         else if (display.textContent.length >= DISPLAY_DIGIT_LIMIT) return;
         else display.textContent += character;
         specialClicked = false;
@@ -105,10 +107,26 @@ buttons.addEventListener("click", e => {
     }
 
     if (character === ".") {
-        if (display.textContent === "0"
-            || specialClicked) display.textContent = "0.";
+        if (
+            display.textContent === "0"
+            || specialClicked
+        ) display.textContent = "0.";
         else if (display.textContent.length >= DISPLAY_DIGIT_LIMIT) return;
         else if (!display.textContent.includes(".")) display.textContent += ".";
+        specialClicked = false;
+        return;
+    }
+
+    if (
+        e.target.classList.contains("delete")
+        || e.target.parentNode.classList.contains("delete")
+    ) {
+        if (
+            display.textContent === "0"
+            || specialClicked
+        ) ;
+        else if (display.textContent.length === 1) display.textContent = "0";
+        else display.textContent = display.textContent.slice(0, -1);
         specialClicked = false;
         return;
     }
