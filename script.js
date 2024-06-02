@@ -62,15 +62,26 @@ let display = document.querySelector(".display");
 let number1 = null;
 let operator = null;
 let number2 = null;
-// buffer stores the exact value of results after a calculation
+// buffer stores the exact value of results after a calculation.
+// For more accuracy when doing multiple calculations.
 let buffer = null;
 // specialClicked is true if the last button that was clicked was an operator
-// or an equals
+// or an equals.
+// For the flow of logic.
 let specialClicked = false;
+// operatorButton if a reference to the button corresponding 
+// to the current operator.
+// For styling the button corresponding to operator currently selected.
+let operatorButton = null;
 
 const buttons = document.querySelector(".buttons");
 
-function displayOperations() {
+// Function that executes the main part of the logic when an operator is clicked
+function displayOperations(e) {
+    if (operatorButton !== null)
+        operatorButton.classList.remove("operator-chosen");
+    operatorButton = e.target;
+    operatorButton.classList.add("operator-chosen");
     if (number1 === null) {
         number1 = specialClicked ? buffer : Number(display.textContent);
     } else if (!specialClicked) {
@@ -89,6 +100,9 @@ buttons.addEventListener("click", e => {
         operator = null;
         number2 = null;
         buffer = null;
+        if (operatorButton !== null)
+            operatorButton.classList.remove("operator-chosen");
+        operatorButton = null;
         display.textContent = "0";
         specialClicked = false;
         return;
@@ -124,7 +138,7 @@ buttons.addEventListener("click", e => {
         if (
             display.textContent === "0"
             || specialClicked
-        ) ;
+        );
         else if (display.textContent.length === 1) display.textContent = "0";
         else display.textContent = display.textContent.slice(0, -1);
         specialClicked = false;
@@ -135,7 +149,7 @@ buttons.addEventListener("click", e => {
     switch (character) {
         case ADD_OPERATOR:
         case SUBTRACT_OPERATOR:
-            displayOperations();
+            displayOperations(e);
             operator = character;
             specialClicked = true;
             return;
@@ -148,7 +162,7 @@ buttons.addEventListener("click", e => {
     switch (unicode) {
         case UNICODE_MULTIPLICATION:
         case UNICODE_DIVISION:
-            displayOperations();
+            displayOperations(e);
             operator = (unicode === UNICODE_MULTIPLICATION) ? MULTIPLY_OPERATOR
                 : DIVIDE_OPERATOR;
             specialClicked = true;
@@ -157,6 +171,9 @@ buttons.addEventListener("click", e => {
 
     // If equals button was clicked
     if (character === "=") {
+        if (operatorButton !== null)
+            operatorButton.classList.remove("operator-chosen");
+        operatorButton = null;
         if (number1 === null) {
             number1 = Number(display.textContent);
             if (specialClicked && buffer !== null) {
