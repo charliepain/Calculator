@@ -247,11 +247,15 @@ document.addEventListener("keydown", e => {
             operator = key;
             specialClicked = true;
             break;
+        // "d" key does the same as "/"
+        case "d":
+            operationMainAction(document.querySelector(`.symbol\\/`));
+            operator = "/";
+            specialClicked = true;
+            break;
         case "=":
         case "Enter":
             equalsAction();
             break;
     }
-
-
 });
