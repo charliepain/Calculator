@@ -49,7 +49,7 @@ function operate(operator, number1, number2) {
             result = multiply(number1, number2);
             break;
         case DIVIDE_OPERATOR:
-            if (number2 === 0) return "Division by 0 error";
+            if (number2 === 0) return "Error";
             result = divide(number1, number2);
             break;
     }
@@ -76,11 +76,54 @@ let operatorButton = null;
 
 const buttons = document.querySelector(".buttons");
 
+function clearAll() {
+    number1 = null;
+    operator = null;
+    number2 = null;
+    buffer = null;
+    if (operatorButton !== null) {
+        operatorButton.classList.remove("operator-chosen");
+    }
+    operatorButton = null;
+    display.textContent = "0";
+    specialClicked = false;
+}
+
+function writeNumber(number) {
+    if (
+        display.textContent === "0"
+        || specialClicked
+    ) display.textContent = number;
+    else if (display.textContent.length >= DISPLAY_DIGIT_LIMIT) return;
+    else display.textContent += number;
+    specialClicked = false;
+}
+
+function dotAction() {
+    if (
+        display.textContent === "0"
+        || specialClicked
+    ) display.textContent = "0.";
+    else if (display.textContent.length >= DISPLAY_DIGIT_LIMIT) return;
+    else if (!display.textContent.includes(".")) display.textContent += ".";
+    specialClicked = false;
+}
+
+function deleteCharacter() {
+    if (
+        display.textContent === "0"
+        || specialClicked
+    ) return;
+    else if (display.textContent.length === 1) display.textContent = "0";
+    else display.textContent = display.textContent.slice(0, -1);
+    specialClicked = false;
+}
+
 // Function that executes the main part of the logic when an operator is clicked
-function displayOperations(e) {
+function operationMainAction(latestOperatorButton) {
     if (operatorButton !== null)
         operatorButton.classList.remove("operator-chosen");
-    operatorButton = e.target;
+    operatorButton = latestOperatorButton;
     operatorButton.classList.add("operator-chosen");
     if (number1 === null) {
         number1 = specialClicked ? buffer : Number(display.textContent);
@@ -91,57 +134,56 @@ function displayOperations(e) {
     }
 }
 
+function equalsAction() {
+    if (operatorButton !== null) {
+        operatorButton.classList.remove("operator-chosen");
+    }
+    operatorButton = null;
+    if (number1 === null) {
+        number1 = Number(display.textContent);
+        if (specialClicked && buffer !== null) {
+            number1 = buffer;
+            buffer = operate(operator, number1, number2);
+            display.textContent = formatResult(buffer);
+            number1 = null;
+        }
+        specialClicked = true;
+    }
+    else if (operator !== null) {
+        number2 = Number(display.textContent);
+        buffer = operate(operator, number1, number2);
+        display.textContent = formatResult(buffer);
+        number1 = null;
+        specialClicked = true;
+    }
+}
+
 buttons.addEventListener("click", e => {
     const character = e.target.textContent;
 
     // If clear button was clicked
     if (character === "AC") {
-        number1 = null;
-        operator = null;
-        number2 = null;
-        buffer = null;
-        if (operatorButton !== null)
-            operatorButton.classList.remove("operator-chosen");
-        operatorButton = null;
-        display.textContent = "0";
-        specialClicked = false;
+        clearAll();
         return;
     }
 
     // If a number button was clicked
     if (!isNaN(character)) {
-        if (
-            display.textContent === "0"
-            || specialClicked
-        ) display.textContent = character;
-        else if (display.textContent.length >= DISPLAY_DIGIT_LIMIT) return;
-        else display.textContent += character;
-        specialClicked = false;
+        writeNumber(character);
         return;
     }
 
     if (character === ".") {
-        if (
-            display.textContent === "0"
-            || specialClicked
-        ) display.textContent = "0.";
-        else if (display.textContent.length >= DISPLAY_DIGIT_LIMIT) return;
-        else if (!display.textContent.includes(".")) display.textContent += ".";
-        specialClicked = false;
+        dotAction();
         return;
     }
 
+    // If the backspace button was clicked
     if (
         e.target.classList.contains("delete")
         || e.target.parentNode.classList.contains("delete")
     ) {
-        if (
-            display.textContent === "0"
-            || specialClicked
-        ) return;
-        else if (display.textContent.length === 1) display.textContent = "0";
-        else display.textContent = display.textContent.slice(0, -1);
-        specialClicked = false;
+        deleteCharacter();
         return;
     }
 
@@ -149,7 +191,7 @@ buttons.addEventListener("click", e => {
     switch (character) {
         case ADD_OPERATOR:
         case SUBTRACT_OPERATOR:
-            displayOperations(e);
+            operationMainAction(e.target);
             operator = character;
             specialClicked = true;
             return;
@@ -162,7 +204,7 @@ buttons.addEventListener("click", e => {
     switch (unicode) {
         case UNICODE_MULTIPLICATION:
         case UNICODE_DIVISION:
-            displayOperations(e);
+            operationMainAction(e.target);
             operator = (unicode === UNICODE_MULTIPLICATION) ? MULTIPLY_OPERATOR
                 : DIVIDE_OPERATOR;
             specialClicked = true;
@@ -171,26 +213,45 @@ buttons.addEventListener("click", e => {
 
     // If equals button was clicked
     if (character === "=") {
-        if (operatorButton !== null)
-            operatorButton.classList.remove("operator-chosen");
-        operatorButton = null;
-        if (number1 === null) {
-            number1 = Number(display.textContent);
-            if (specialClicked && buffer !== null) {
-                number1 = buffer;
-                buffer = operate(operator, number1, number2);
-                display.textContent = formatResult(buffer);
-                number1 = null;
-            }
-            specialClicked = true;
-        }
-        else if (operator !== null) {
-            number2 = Number(display.textContent);
-            buffer = operate(operator, number1, number2);
-            display.textContent = formatResult(buffer);
-            number1 = null;
-            specialClicked = true;
-        }
+        equalsAction();
         return;
     }
+});
+
+// Keyboard support
+document.addEventListener("keydown", e => {
+    const key = e.key;
+
+    // If a number key is clicked
+    if (!isNaN(key)) {
+        writeNumber(key);
+        return;
+    }
+
+    switch (key) {
+        // "c" key for clearing data
+        case "c":
+            clearAll();
+            break;
+        case ".":
+            dotAction();
+            break;
+        case "Backspace":
+            deleteCharacter();
+            break;
+        case "+":
+        case "-":
+        case "*":
+        case "/":
+            operationMainAction(document.querySelector(`.symbol\\${key}`));
+            operator = key;
+            specialClicked = true;
+            break;
+        case "=":
+        case "Enter":
+            equalsAction();
+            break;
+    }
+
+
 });
